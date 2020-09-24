@@ -117,19 +117,82 @@ public:
         }
     }
 
-    void killSelf(){
-        if(!isLeaf){    // If is internal Node go down
-            for(int i=0; i<children.t(); ++i){
-                if(children[i]){
-                    children[i]->killSelf();
-                }
+    void remove(T k){
+        cout << " Check from This node and remove\n";
+        int idx = getIndexFromKey(k);
+        // if key is present in this node
+        if(idx < currentKeys && keys[idx] == k){
+            // Case 1
+            if(this->isLeaf){
+                cout << "Call RemoveFromLeaf\n";
+                this->removeFromLeaf(idx);
+            }
+            // Case 2 (key is in internal node)
+            else{
+                cout << "Call RemoveFromNonLeaf\n";
+                //this->removeFromNonLeaf(idx); // TODO
             }
         }
-        delete this;    // if I arrived here is a Leaf, so delete it
+        // if key is Not present in this node (Case 3)
+        else {
+            cout << "Case 3\n";
+            if(this->isLeaf){
+                cout << "Key does not exist in the tree\n";
+                return;
+            }
+            bool isKeyInLastChild = ((idx == currentKeys) ? true : false);
+            if(children[idx]->currentKeys < t){
+                fillChild(idx);
+            }
+            if(isKeyInLastChild && idx > currentKeys){  // if last child has been merged
+                children[idx - 1]->remove(k);
+            }
+            else {
+                children[idx]->remove(k);
+            }
+        }
     }
 
-    T getKey(int keyIdex){
-        return this->keys[keyIdex];
+    void removeFromLeaf(int idx){
+        for(int i = idx + 1; i < currentKeys; i++){
+            keys[i - 1] = keys[i];
+        }
+        currentKeys--;
+    }
+
+    int getIndexFromKey(T k){
+        int idx = 0;
+        while(idx < currentKeys && k > keys[idx]){
+            idx++;
+        }
+        return idx;
+    }
+
+    // Child node at children[idx] only has t-1 keys
+    void fillChild(int idx){
+        // Case 3a
+        if(idx != 0 && children[idx - 1]->currentKeys >= t){
+            //borrowFromLeftSibling(idx);
+        }
+        else if(idx != currentKeys && children[idx + 1]->currentKeys >= t){
+            //borrowFromRightSibling(idx);
+        }
+        // Case 3b: Merge child at children[idx] with one sibling
+        // if children[idx] is the last child, merge with left sibling Otherwise merge with right sibling
+        else{
+            if(idx != currentKeys){
+                //merge(idx);
+            }
+            else {
+                //merge(idx - 1);
+            }
+        }
+    }
+
+
+
+    T getKey(int keyIdx){
+        return this->keys[keyIdx];
     }
 
     void recorrerNodes() {
@@ -140,10 +203,15 @@ public:
             auto temp = next.front();
             next.pop();
 
+            if(!temp.first){
+                return;
+            }
             temp.first->printIndexes(temp.second);
-
             for (int i = 0; i < temp.first->children.size(); i++) {
-                next.push(pair<Node<T>*, int>(temp.first->children[i], temp.second + 2));
+                if(temp.first->children[i]){
+                    next.push(pair<Node<T>*, int>(temp.first->children[i], temp.second + 2));
+                }
+                //next.push(pair<Node<T>*, int>(temp.first->children[i], temp.second + 2));
             }
 
             cout << endl;
@@ -152,9 +220,20 @@ public:
 
     void printIndexes(int level) {
         cout << level << ": ";
-        for (int i = 0; i < keys.size(); i++) {
+        for (int i = 0; i < currentKeys; i++) {
             cout << keys[i] << " ";
         }
+    }
+
+    void killSelf(){
+        if(!isLeaf){    // If is internal Node go down
+            for(int i=0; i<children.t(); ++i){
+                if(children[i]){
+                    children[i]->killSelf();
+                }
+            }
+        }
+        delete this;    // if I arrived here is a Leaf, so delete it
     }
 
     friend class BTree <T>;

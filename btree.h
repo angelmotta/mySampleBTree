@@ -13,6 +13,7 @@ public:
     BTree(unsigned int minDegree) : minDegree(minDegree), root(nullptr) {};
 
     pair<Node<T>*, int> search(int k) {
+        cout << "** Search key: " << k << " **\n";
         if(!root){
             return make_pair(nullptr, -1);
         }
@@ -49,10 +50,28 @@ public:
         }
     }
 
-    bool remove(int k) {
-        // TODO
+    void remove(int k) {
+        cout << "** Remove: " << k << " **\n";
+        if(!root){
+            cout << "BTree is empty\n";
+            return;
+        }
+        root->remove(k);
+        // After deletion, if root node has 0 keys, check if its first child and make it the new root node.
+        // Otherwise set root as Null
+        if(root->currentKeys == 0){
+            auto ptrRoot = root;
+            if(root->isLeaf){
+                root = nullptr;
+            }
+            else {
+                root = root->children[0];
+            }
+            delete ptrRoot;
+        }
     }
 
+    // InOrder
     void traverse(){
         cout << "** Traverse print BTree **\n";
         if(this->root){
@@ -62,8 +81,18 @@ public:
     }
 
     void print() {
+        cout << "** Print Level BTree **\n";
         if(root) root->recorrerNodes();
         cout << '\n';
+    }
+
+    void printSearch(pair<Node<T>*, int> result){
+        if(result.first){
+            cout << result.first->getKey(result.second) << "\n";
+        }
+        else {
+            cout << "Key Not Found\n";
+        }
     }
 
     ~BTree(){
