@@ -207,11 +207,8 @@ public:
                 return;
             }
             temp.first->printIndexes(temp.second);
-            for (int i = 0; i < temp.first->children.size(); i++) {
-                if(temp.first->children[i]){
-                    next.push(pair<Node<T>*, int>(temp.first->children[i], temp.second + 2));
-                }
-                //next.push(pair<Node<T>*, int>(temp.first->children[i], temp.second + 2));
+            for (int i = 0; i <= temp.first->currentKeys; i++) {
+                next.push(pair<Node<T>*, int>(temp.first->children[i], temp.second + 1));
             }
 
             cout << endl;
@@ -227,7 +224,7 @@ public:
 
     void killSelf(){
         if(!isLeaf){    // If is internal Node go down
-            for(int i=0; i<children.t(); ++i){
+            for(int i = 0; i < this->currentKeys; ++i){
                 if(children[i]){
                     children[i]->killSelf();
                 }

@@ -28,12 +28,12 @@ int main(int argc, char *argv[]) {
     treecampeon.insert(2);
     treecampeon.insert(17);
     treecampeon.insert(12);
-    treecampeon.insert(6);
-    treecampeon.traverse();
+//    treecampeon.insert(6);
+//    treecampeon.traverse();
     treecampeon.print();
-    treecampeon.remove(6);
-    treecampeon.traverse();
-    treecampeon.print();
+//    treecampeon.remove(6);
+//    treecampeon.traverse();
+//    treecampeon.print();
     //old test
     /*
     BTree<int> treecampeon(3);

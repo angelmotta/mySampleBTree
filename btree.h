@@ -96,10 +96,10 @@ public:
     }
 
     ~BTree(){
-        cout << "Pending Call Destructor\n";
-//        if(root){
-//            root->killSelf();
-//        }
+        cout << "Pending Destructor\n";
+        if(root){
+            root->killSelf();
+        }
     }
 };
 
